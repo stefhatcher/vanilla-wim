@@ -1,8 +1,3 @@
-/**
- * Stefanie Hatcher
- * Vanilla Javascript Flexible Type.
- * IE 8+, FF 3.5+, Chrome 4+, Android 2.1+
- */
 (function(window, undefined) {
   'use strict';
 
@@ -25,12 +20,11 @@
 
 
   // Get computed styles.
-  // ===================
-  // https://raw.github.com/desandro/vanilla-masonry/master/masonry.js
+  // ====================
   var defaultView = document.defaultView;
   var getStyles = defaultView && defaultView.getComputedStyle ?
     function(element) {
-      return defaultView.getComputedStyle( element, null );
+      return defaultView.getComputedStyle(element, null);
     } :
     function(element) {
       return element.currentStyle;
@@ -39,8 +33,8 @@
 
   // Returns the width of an element, like getting width().
   // Fallback to computed width, then uncomputed CSS if necessary.
-  // ==========
-  // Refactored from jQuery
+  // =============================================================
+  // Refactored from jQuery & Masonry
   function getWidth(element) {
     var value = element.offsetWidth,
         computedStyle = getStyles(element),
@@ -49,10 +43,11 @@
         borderLeft = parseFloat(computedStyle['borderLeftWidth']) || 0,
         borderRight = parseFloat(computedStyle['borderRightWidth']) || 0;
 
-    if (value > 0) {
+    if (0 < value) {
       value -= paddingLeft + paddingRight + borderLeft + borderRight;
     } else {
       value = computedStyle['width'];
+
       if (value < 0 || value === null) {
         value = element.style.width || 0;
       }
@@ -64,7 +59,7 @@
   }
 
   // VanillaWim
-  // ============
+  // ==========
   function VanillaWim(selector, options) {
     if (!selector) {
       return;
@@ -74,23 +69,24 @@
   }
 
   VanillaWim.defaults = {
-    max: 9999,
-    min: 1,
+    maxWidth: 9999,
+    minWidth: 1,
     maxFont: 9999,
     minFont: 1,
     fontRatio: 35,
-    lineRatio: 1.45
+    lineHeight: 1.45 // unitless line-height
   };
 
   VanillaWim.prototype.update = function() {
     for (var i = 0, l = this.elements.length; i < l; i++) {
-      var el = this.elements[i],
-          elw = getWidth(el),
-          width = Math.max(Math.min(this.options.max, elw), this.options.min),
+      var element = this.elements[i],
+          elWidth = getWidth(element),
+          width = Math.max(Math.min(this.options.maxWidth, elWidth), this.options.minWidth),
           fontBase = ~~(width / this.options.fontRatio),
           fontSize = Math.max(Math.min(this.options.maxFont, fontBase), this.options.minFont);
 
-      el.style.fontSize = fontSize + 'px';
+      element.style.fontSize = fontSize + 'px';
+      element.style.lineHeight = this.options.lineHeight;
     }
   };
 
@@ -108,23 +104,11 @@
       this.options[prop] = options[prop];
     }
 
-    for (var i = 0, l = this.elements.length; i < l; i++) {
-      var el = this.elements[i],
-          elw = getWidth(el),
-          width = Math.max(Math.min(this.options.max, elw), this.options.min),
-          fontBase = ~~(width / this.options.fontRatio),
-          fontSize = Math.max(Math.min(this.options.maxFont, fontBase), this.options.minFont);
-
-      // populate unitless line-height
-      el.style.lineHeight = this.options.lineRatio;
-    }
-
     this.update();
-
     addEvent(window, 'resize', function() {
       self.update();
     });
-  }
+  };
 
   window.VanillaWim = VanillaWim;
 })(window);
