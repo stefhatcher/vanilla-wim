@@ -11,5 +11,5 @@ var h1 = new VanillaWim('h1', {
   minFont: 16,
   fontRatio: 55,
   lineHeight: 1.6
-};
+});
 ```
