@@ -1,4 +1,4 @@
-(function(window, undefined) {
+(((window, undefined) => {
   'use strict';
 
   var document = window.document;
@@ -11,7 +11,7 @@
       obj.addEventListener( type, fn, false );
     } else if ( obj.attachEvent ) {
       obj[ 'e' + type + fn ] = fn;
-      obj[ type + fn ] = function() {
+      obj[ type + fn ] = () => {
         obj[ 'e' + type + fn ]( window.event );
       };
       obj.attachEvent( "on" + type, obj[ type + fn ] );
@@ -23,12 +23,8 @@
   // ====================
   var defaultView = document.defaultView;
   var getStyles = defaultView && defaultView.getComputedStyle ?
-    function(element) {
-      return defaultView.getComputedStyle(element, null);
-    } :
-    function(element) {
-      return element.currentStyle;
-    };
+    element => defaultView.getComputedStyle(element, null) :
+    element => element.currentStyle;
 
 
   // Returns the width of an element, like getting width().
@@ -36,12 +32,12 @@
   // =============================================================
   // Refactored from jQuery & Masonry
   function getWidth(element) {
-    var value = element.offsetWidth,
-        computedStyle = getStyles(element),
-        paddingLeft = parseFloat(computedStyle['paddingLeft']) || 0,
-        paddingRight = parseFloat(computedStyle['paddingRight']) || 0,
-        borderLeft = parseFloat(computedStyle['borderLeftWidth']) || 0,
-        borderRight = parseFloat(computedStyle['borderRightWidth']) || 0;
+    var value = element.offsetWidth;
+    var computedStyle = getStyles(element);
+    var paddingLeft = parseFloat(computedStyle['paddingLeft']) || 0;
+    var paddingRight = parseFloat(computedStyle['paddingRight']) || 0;
+    var borderLeft = parseFloat(computedStyle['borderLeftWidth']) || 0;
+    var borderRight = parseFloat(computedStyle['borderRightWidth']) || 0;
 
     if (0 < value) {
       value -= paddingLeft + paddingRight + borderLeft + borderRight;
@@ -79,11 +75,11 @@
 
   VanillaWim.prototype.update = function() {
     for (var i = 0, l = this.elements.length; i < l; i++) {
-      var element = this.elements[i],
-          elWidth = getWidth(element),
-          width = Math.max(Math.min(this.options.maxWidth, elWidth), this.options.minWidth),
-          fontBase = ~~(width / this.options.fontRatio),
-          fontSize = Math.max(Math.min(this.options.maxFont, fontBase), this.options.minFont);
+      var element = this.elements[i];
+      var elWidth = getWidth(element);
+      var width = Math.max(Math.min(this.options.maxWidth, elWidth), this.options.minWidth);
+      var fontBase = ~~(width / this.options.fontRatio);
+      var fontSize = Math.max(Math.min(this.options.maxFont, fontBase), this.options.minFont);
 
       element.style.fontSize = fontSize + 'px';
       element.style.lineHeight = this.options.lineHeight;
@@ -105,10 +101,10 @@
     }
 
     this.update();
-    addEvent(window, 'resize', function() {
+    addEvent(window, 'resize', () => {
       self.update();
     });
   };
 
   window.VanillaWim = VanillaWim;
-})(window);
+}))(window);
